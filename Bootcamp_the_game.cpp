@@ -353,7 +353,7 @@ private:
     //              Strength    Endurance   Precision   Mental_Fortitude
     int stats[4] = {1,          1,          1,          1};
     //                  Health  Sanity      Reputation  Punchability
-    int condition[4] = {100,    50,          20,          30};
+    int condition[4] = {100,    50,         50,         30};
     int score = 0;
 public:
     int passed_day() {
@@ -423,20 +423,20 @@ public:
         else if (condition[Sanity] == 0) {
             terminal.clear_screen();
             terminal.set_cursor(point{0,0});
-            cout << "After a manic episode you accidentally say the magic words to your Senior DI\n" <<
+            cout << "During a manic episode you accidentally say the magic words to your Senior DI\n" <<
                     "Now you can't even have your own shoelaces\n\n";
             failure = true;
         }
         else if (condition[Reputation] == 0) {
             terminal.clear_screen();
             terminal.set_cursor(point{0,0});
-            cout << "\"Clearly you don't care about your reputation\"\nat least thats what the Senior DI said\nWell it doesn't matter now, a discharge is a discharge\n\n";
+            cout << "\"Clearly you don't care about being here\"\nat least thats what the Senior DI said\nWell it doesn't matter now, a discharge is a discharge\n\n";
             failure = true;
         }
         else if (condition[Punchability] == 100) {
             terminal.clear_screen();
             terminal.set_cursor(point{0,0});
-            cout << "Have you ever seen the first bootcamp DI scene in Jarhead?\nImagine that but 10x worse\nat least you made the local news";
+            cout << "You know all those crazy DI stories you hear?\nImagine that but 10x worse\nat least you made the local news";
             failure = true;
         }
         if (failure) {
@@ -529,16 +529,11 @@ public:
         player.update_stat_window();
         player.check_failure_conditions();
         player.passed_day();
-        terminal.fill(point{80,9}, 50, 1); // to clear the condition changes
+        terminal.fill(point{80,9}, 90, 1); // to clear the condition changes
         terminal.set_cursor(point{0,6 + y_offset});
         return 0;
     }
 };
-
-class event_manager() {
-private:
-    vector<event> generic_events;
-}
 
 int main(){
     
@@ -551,28 +546,134 @@ int main(){
     terminal.clear_screen();
     player.update_stat_window();
 
-    // Make A Rack Event
-        event rack = {"You Encounter A Rack"};
-        rack.options.push_back(option{" Make Your rack", {Sanity, 15, Punchability, -10, Reputation, 5}, "\"This is the worst rack I've ever seen\"\nWell at least you tried"});
-        rack.options.push_back(option{" Jump off 3rd Deck", {Sanity, 25, Health, -15}, "You attempt to jump out the window but forget to open it"});
-        rack.options.push_back(option{" Roll on the floor like an eel", {Sanity, 30, Punchability, 15}, "You Look Really Stupid"});
-        rack.run_event();
-    // PT Event
-        event pft = {"Today you have your annual Physical Fitness Test"};
-        pft.options.push_back(option{" Be a Tryhard", {Sanity, -20, Punchability, -10, Reputation, 10}, "You vomit halfway through the run and have to put it into your pocket\nat least you got a decent time"});
-        pft.options.push_back(option{" Shitbag the run",{Sanity, 10, Punchability, 10, Reputation, -10},"Your DIs yell at you for walking, but hey what do they know about running?"});
-        pft.options.push_back(option{" Try to hide in the bushes and cheat your time",{Sanity, 20, Punchability, 20, Reputation, -20},"You run and try to hide in the bushes halfway through the run\nUnfortunately you forgot that you needed to record your time so you got caught"});
-        pft.run_event();
-    // Chow Event
-        event chow = {"You arrive at the chowhall"};
-        chow.options.push_back(option{" I gotta pick the healthy options", {Sanity, -10, Health, 10}, "You eat an overcooked pork chop and salad\nAt least it isn't box chow"});
-        chow.options.push_back(option{" I'm gonna eat 16 peanut butter packets", {Sanity, 10, Health, -5, Reputation, -10}, "You realize far too late that you ate too many packets\n\"Turn on the Vacuum\""});
-        chow.options.push_back(option{" I earned desert", {Sanity, 20, Punchability, 10, Health, -15}, "Your DIs caught you and made you throw it away halfway through eating it\n\"Was it worth it?\""});
-        chow.run_event();
-    // DI Event
-        event DI_encounter = {"You encounter a Rogue DI"};
-        DI_encounter.options.push_back(option{"Greet the DI", {Sanity, -10, Punchability, -10, Reputation, 10}, "The DI has you clean one of their empty barracks\nNo rest for the wicked"});
-        DI_encounter.options.push_back(option{"Turn The other direction to avoid them", {Sanity, 10, Punchability, 10, Reputation, -10}, "Just as you are about to clear the corner you hear \"ZERO\"\nThe DI did not think you were clever"});
-        DI_encounter.options.push_back(option{"Continue Walking and Ignore the DI", {Health, -25, Punchability, 30, Reputation, -20}, "Seriously, what did you expect to happen?\n"});
-        DI_encounter.run_event();
+
+    event rack = {"You Encounter A Rack"};
+    rack.options.push_back(option{" Make Your rack", {Sanity, -15, Punchability, -10, Reputation, 5}, "\"This is the worst rack I've ever seen\"\nWell at least you tried"});
+    rack.options.push_back(option{" Jump off 3rd Deck", {Sanity, 25, Health, -15}, "You attempt to jump out the window but forget to open it"});
+    rack.options.push_back(option{" Roll on the floor like an eel", {Sanity, 30, Punchability, 15}, "You Look Really Stupid"});
+    rack.run_event();
+
+    event pft = {"Today you have your annual Physical Fitness Test"};
+    pft.options.push_back(option{" Be a Tryhard", {Sanity, -20, Punchability, -10, Reputation, 10}, "You vomit halfway through the run and have to put it into your pocket\nat least you got a decent time"});
+    pft.options.push_back(option{" Shitbag the run",{Sanity, 10, Punchability, 10, Reputation, -5},"Your DIs yell at you for walking, but hey what do they know about running?"});
+    pft.options.push_back(option{" Try to hide in the bushes and cheat your time",{Sanity, 20, Punchability, 20, Reputation, -15},"You hide in the bushes halfway through the run\nUnfortunately you forgot that you needed to record your time"});
+    pft.run_event();
+
+    event chow = {"You arrive at the chowhall"};
+    chow.options.push_back(option{" I gotta pick the healthy options", {Sanity, -10, Health, 10}, "You eat an overcooked pork chop and salad\nAt least it isn't box chow"});
+    chow.options.push_back(option{" I'm gonna eat 16 peanut butter packets", {Sanity, 10, Health, -5, Reputation, -10}, "You realize far too late that you ate too many peanut butter packets\n\"Turn on the Vacuum\""});
+    chow.options.push_back(option{" I earned desert", {Sanity, 20, Punchability, 10, Health, -15}, "Your DIs make you throw it away halfway through eating it\n\"Was it worth it?\""});
+    chow.run_event();
+
+    event DI_encounter = {"You encounter a Rogue DI"};
+    DI_encounter.options.push_back(option{" Greet the DI", {Sanity, -10, Punchability, -10, Reputation, 10}, "The DI has you clean one of the empty barracks\nNo rest for the wicked"});
+    DI_encounter.options.push_back(option{" Turn The other direction to avoid them", {Sanity, 10, Punchability, 10, Reputation, -10}, "Just as you are about to clear the corner you hear \"ZERO\"\nThe DI did not think you were clever"});
+    DI_encounter.options.push_back(option{" Continue Walking and Ignore the DI", {Health, -25, Punchability, 30, Reputation, -20}, "Seriously, what did you expect to happen?\n"});
+    DI_encounter.run_event();
+
+    event sunday = {"It's Sunday"};
+    sunday.options.push_back(option{" Talk to the chapplain", {Sanity, 20, Punchability, 20}, "You talk about how bad bootcamp is and how you want to go home\nUnfortunately Chaps can't send you home"});
+    sunday.options.push_back(option{" Go to church", {Sanity, 10}, "You fall asleep during the sermon and wake up just before\nyour DIs come to get you"});
+    sunday.options.push_back(option{" I'm an atheist", {Sanity, -10, Health, -10, Reputation, 5}, "Some idiot in the barracks decided to take a nap\nNext thing you know you're pushing towels across the deck\n"});
+    sunday.run_event();
+
+    event ruck = {"Your company is preparing for a ruck with ammo cans"};
+    ruck.options.push_back(option{" Make the most of it", {Sanity, -10, Reputation, 10, Punchability, -5}, "After the ruck you get a nasty blister on your foot\nMedical chits are for the weak"});
+    ruck.options.push_back(option{" I have a boo boo", {Sanity, 10, Reputation, -15, Punchability, -10}, "After begging your DIs to go to medical they begrudgingly accept\nThey make you wear a binky and diaper for the rest of the day"});
+    ruck.options.push_back(option{" Empty Your ammo can before putting it in your pack", {Sanity, 15, Health, -10, Reputation, -5}, "The DIs start getting suspicous when you aren't sweating halfway through the run\n\"Don't worry I'll get mine\"\nThey did indeed get theirs"});
+    ruck.run_event();
+
+    event haircut = {"It's time for a haircut, again"};
+    haircut.options.push_back(option{" Let the barber do his job", {Sanity, -5, Reputation, 5}, "You now have 1 millimeter of hair left.\nAt least you won't need a haircut for another week."});
+    haircut.options.push_back(option{" Ask for a fade", {Sanity, -10, Reputation, -10, Punchability, 10}, "The barber laughs at your request and shaves your head even more aggressively.\n\"This isn't a salon, princess.\""});
+    haircut.options.push_back(option{" Refuse the haircut", {Sanity, -20, Punchability, 20, Reputation, -20}, "You make the bold choice to defy tradition, only to find yoursel\ngetting personally escorted by a DI to the barber's chair."});
+    haircut.run_event();
+
+    event inspection = {"The DIs are conducting a barracks inspection"};
+    inspection.options.push_back(option{" Clean everything like a maniac", {Sanity, -20, Punchability, -15, Reputation, 10}, "You scrub the floors until they're reflective.\nBut the DIs still find a speck of dust. Typical."});
+    inspection.options.push_back(option{" Hide under your rack", {Sanity, 15, Reputation, -20, Punchability, 20}, "You manage to hide under your rack.\nUnfortunately, one of your fellow recruits rats you out."});
+    inspection.options.push_back(option{" Sabotage someone else's rack", {Sanity, 5, Reputation, -25, Punchability, 30}, "You swap your dirty laundry with someone else's.\nThat recruit is now the focus of the DIs' fury."});
+    inspection.run_event();
+
+    event firewatch = {"You've been assigned firewatch for the night"};
+    firewatch.options.push_back(option{" Stay awake and alert", {Sanity, -10, Health, -5, Reputation, 10}, "You endure the night shift, staring at the walls.\nAt least you didn't fall asleep on duty."});
+    firewatch.options.push_back(option{" Sneak in a nap", {Sanity, 20, Reputation, -20, Punchability, 15}, "You nod off for a bit, only to be woken up by a DI screaming in your face.\nGood luck explaining this one."});
+    firewatch.options.push_back(option{" Swap with another recruit", {Sanity, 10, Reputation, -15, Punchability, 5}, "You convince another recruit to take your shift, but the DIs find out.\nBoth of you are punished."});
+    firewatch.run_event();
+
+    event mre = {"It's time to eat an MRE"};
+    mre.options.push_back(option{" Choose Chili Mac", {Sanity, 10, Health, 5}, "Chili Mac isn't half bad.\nAt least you didn't get the dreaded Veggie Omelette."});
+    mre.options.push_back(option{" Choose the mystery meal", {Sanity, -5, Health, -10, Reputation, 5}, "You choose a mystery MRE.\nYou regret everything after the first bite."});
+    mre.options.push_back(option{" Trade your MRE for something better", {Sanity, 15, Health, 10, Reputation, -5}, "You successfully trade your MRE for a slightly better meal.\nUnfortunately, this raises suspicion among the DIs."});
+    mre.run_event();
+
+    event range_day = {"It's time for rifle qualification at the range"};
+    range_day.options.push_back(option{" Focus on your marksmanship", {Sanity, -10, Reputation, 15}, "You hit your targets with precision.\nYou're feeling confident for qualification day."});
+    range_day.options.push_back(option{" Rush through the drills", {Sanity, 10, Reputation, -10, Punchability, 10}, "You rush through the drills, missing most of your shots.\nThe DIs are not impressed."});
+    range_day.options.push_back(option{" Fake a malfunction", {Sanity, 5, Reputation, -20, Punchability, 20}, "You pretend your rifle is jammed to avoid further embarrassment.\nThe DIs see right through your excuse."});
+    range_day.run_event();
+
+    event laundry_day = {"It's time to do your laundry"};
+    laundry_day.options.push_back(option{" Do your laundry properly", {Sanity, -10, Reputation, 10}, "You manage to wash your clothes without any issues.\nClean gear means happy DIs."});
+    laundry_day.options.push_back(option{" Forget your clothes in the dryer", {Sanity, -5, Punchability, 10, Reputation, -10}, "You leave your clothes in the dryer too long.\nYour DIs are NOT pleased when they find out."});
+    laundry_day.options.push_back(option{" Let someone else handle it", {Sanity, 15, Reputation, -15, Punchability, 5}, "You get another recruit to do your laundry.\nThe DIs eventually catch on to your laziness."});
+    laundry_day.run_event();
+
+    event night_fire = {"Night fire training has begun"};
+    night_fire.options.push_back(option{" Stay focused and follow the drills", {Sanity, -10, Health, -5, Reputation, 10}, "You keep your cool in the darkness and hit your targets.\nYour DIs notice your effort."});
+    night_fire.options.push_back(option{" Complain about the cold", {Sanity, 15, Reputation, -20, Punchability, 10}, "Your constant complaints get you nowhere.\nIn fact, they earn you extra attention from the DIs."});
+    night_fire.options.push_back(option{" Take a nap between drills", {Sanity, 20, Health, -10, Reputation, -10}, "You sneak in a quick nap between exercises.\nUnfortunately, a DI spots you and makes you pay for it."});
+    night_fire.run_event();
+
+    event obstacle_course = {"Time for the obstacle course"};
+    obstacle_course.options.push_back(option{" Go all out", {Sanity, -20, Health, -10, Reputation, 20}, "You push yourself to the limit and complete the course.\nThe DIs respect your effort, but you feel the pain."});
+    obstacle_course.options.push_back(option{" Half-ass it", {Sanity, 10, Health, 5, Reputation, -10}, "You take your time, avoiding the hardest obstacles.\nThe DIs notice and aren't impressed."});
+    obstacle_course.options.push_back(option{" Pretend to be injured", {Sanity, 15, Reputation, -25, Punchability, 25}, "You fake an injury to get out of the course.\nYour fellow recruits hate you for it, but it worked."});
+    obstacle_course.run_event();
+
+    event mail_call = {"Mail call has arrived"};
+    mail_call.options.push_back(option{" Receive a letter from home", {Sanity, 25, Punchability, -10}, "You get a heartfelt letter from home.\nIt boosts your spirits, but the DIs don't care about your feelings."});
+    mail_call.options.push_back(option{" No mail for you", {Sanity, -15, Punchability, 10}, "You get no mail while others do.\nYou feel forgotten, but hey, more reason to punch something."});
+    mail_call.options.push_back(option{" Write a letter instead", {Sanity, 10, Punchability, -5}, "You spend your time writing home.\nIt helps you cope with bootcamp's stress."});
+    mail_call.run_event();
+
+    event sick_call = {"You don't feel great. Time to decide whether to go to sick call"};
+    sick_call.options.push_back(option{" Tough it out", {Sanity, -5, Health, -10, Reputation, 10}, "You decide not to go to sick call.\nYour condition worsens, but you avoid the stigma of being a 'weak body'."});
+    sick_call.options.push_back(option{" Go to sick call", {Sanity, 15, Health, 20, Reputation, -10}, "You go to medical and get some much-needed care.\nOf course, the DIs mock you for being weak."});
+    sick_call.options.push_back(option{" Fake an illness", {Sanity, 20, Health, -5, Reputation, -20, Punchability, 20}, "You fake being sick to get out of training.\nThe DIs catch on and make your life a nightmare."});
+    sick_call.run_event();
+
+    event drill_practice = {"Time for drill practice"};
+    drill_practice.options.push_back(option{" Put in full effort", {Sanity, -10, Reputation, 15}, "You snap to attention and perform every movement perfectly.\nThe DIs are actually impressed."});
+    drill_practice.options.push_back(option{" Slack off and hope no one notices", {Sanity, 10, Reputation, -15, Punchability, 10}, "You half-heartedly go through the motions.\nUnfortunately, the DIs notice every mistake."});
+    drill_practice.options.push_back(option{" Sabotage another recruit", {Sanity, 5, Reputation, -25, Punchability, 20}, "You purposely mess up someone else's drill movements.\nThe DIs go after them instead of you."});
+    drill_practice.run_event();
+
+    event gear_inspection = {"Gear inspection is happening soon"};
+    gear_inspection.options.push_back(option{" Make sure your gear is spotless", {Sanity, -15, Reputation, 10}, "You spend hours cleaning your gear.\nThe DIs find one minor flaw, but it's better than most."});
+    gear_inspection.options.push_back(option{" Hide your dirty gear", {Sanity, 10, Reputation, -20, Punchability, 15}, "You stash your dirty gear in a locker, hoping the DIs won't check.\nThey do, and it's not pretty."});
+    gear_inspection.options.push_back(option{" Blame another recruit for your dirty gear", {Sanity, 5, Reputation, -25, Punchability, 20}, "You convince the DIs that someone else messed up.\nThey believe you, for now."});
+    gear_inspection.run_event();
+
+    event tread_water = {"It's time to pass the water survival test"};
+    tread_water.options.push_back(option{" Tread water for the full time", {Sanity, -10, Health, -10, Reputation, 15}, "You successfully tread water for the required time.\nYou're exhausted but proud."});
+    tread_water.options.push_back(option{" Fake an injury and get out early", {Sanity, 15, Health, 5, Reputation, -20}, "You pretend to hurt your leg halfway through the test.\nThe DIs aren't buying it."});
+    tread_water.options.push_back(option{" Try to blend into the crowd and avoid the test", {Sanity, 5, Reputation, -25, Punchability, 20}, "You hide in the back, but the DIs pull you out anyway.\nNow you're on their radar."});
+    tread_water.run_event();
+
+    event hygiene_inspection = {"Hygiene inspection has begun"};
+    hygiene_inspection.options.push_back(option{" Follow hygiene protocol", {Sanity, -10, Reputation, 10}, "You pass hygiene inspection without any issues.\nYour DIs can't find anything wrong, for once."});
+    hygiene_inspection.options.push_back(option{" Skip a few steps", {Sanity, 10, Reputation, -10, Punchability, 5}, "You skip a few hygiene steps, hoping they won't notice.\nThe DIs call you out for it immediately."});
+    hygiene_inspection.options.push_back(option{" Lie and say you forgot your supplies", {Sanity, 5, Reputation, -20, Punchability, 15}, "You claim you forgot your hygiene supplies.\nThe DIs don't believe you, and now you're in trouble."});
+    hygiene_inspection.run_event();
+
+    event teamwork_exercise = {"A teamwork exercise has started"};
+    teamwork_exercise.options.push_back(option{" Work with your team", {Sanity, -5, Reputation, 15}, "You contribute to the team effort and complete the exercise.\nYour DIs acknowledge your teamwork."});
+    teamwork_exercise.options.push_back(option{" Let others do the work", {Sanity, 10, Reputation, -15, Punchability, 10}, "You slack off and let others do the heavy lifting.\nYour DIs and team members are not impressed."});
+    teamwork_exercise.options.push_back(option{" Sabotage the exercise", {Sanity, 5, Reputation, -25, Punchability, 25}, "You intentionally mess up the teamwork exercise.\nEveryone is punished, but at least it wasn't just you."});
+    teamwork_exercise.run_event();
+
+
+    cout << "You beat the game";
+    return 0;
 }

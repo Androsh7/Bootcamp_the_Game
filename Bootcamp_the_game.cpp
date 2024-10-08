@@ -451,7 +451,7 @@ public:
         else if (condition[Punchability] == 100) {
             terminal.clear_screen();
             terminal.set_cursor(point{0,0});
-            cout << "You know all those crazy DI stories you hear?\nImagine that but 10x worse\nat least you made the local news";
+            cout << "You know all those crazy DI stories you hear?\nImagine that but 10x worse\nat least you made the local news\n\n";
             failure = true;
         }
         if (failure) {
@@ -593,6 +593,16 @@ public:
  
     int run_events() {
         while (true) {
+            // intro message
+            terminal.clear_screen();
+            terminal.set_cursor(point{0,0});
+            cout << "You have made the mistake of joining the Marines\n" <<
+                    "This is your attempt to get through bootcamp\n\n" <<
+                    "Press ENTER to continue\n";
+            keyboard.wait_for_enter();
+            terminal.clear_screen();
+            player.update_stat_window();
+
             bool restart = false;
             bool fail_cond = false;
             for (int i = 0; i < shuffled_events.size(); i++) {
@@ -636,17 +646,6 @@ int main(){
     
     // set random seed
     srand(time(NULL));
-
-    terminal.clear_screen();
-    terminal.set_cursor(point{0,0});
-    cout << "You have made the mistake of joining the Marines\n" <<
-            "This is your attempt to get through bootcamp\n\n" <<
-            "Press ENTER to continue\n";
-    keyboard.wait_for_enter();
-    terminal.clear_screen();
-    player.update_stat_window();
-
-
     event rack = {"You Encounter A Rack"};
     rack.options.push_back(option{" Make Your rack", {Sanity, -15, Punchability, -10, Reputation, 5}, "\"This is the worst rack I've ever seen\"\nWell at least you tried"});
     rack.options.push_back(option{" Jump off 3rd Deck", {Sanity, 25, Health, -15}, "You attempt to jump out the window but forget to open it"});
